@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { User, Phone, MapPin, AlertCircle } from 'lucide-react';
@@ -15,8 +14,7 @@ interface ProfileFormData {
 }
 
 const CompleteProfilePage: React.FC = () => {
-  const { user, updateUserProfile, refreshUserProfile } = useSupabase();
-  const navigate = useNavigate();
+  const { user, updateUserProfile } = useSupabase();
   const [isLoading, setIsLoading] = useState(false);
   
   const { 
@@ -57,10 +55,12 @@ const CompleteProfilePage: React.FC = () => {
       if (error) throw error;
 
       // Correction : forcer le rafraîchissement du profil depuis la base
-      await refreshUserProfile();
-
       toast.success('Profil complété avec succès !');
-      navigate('/');
+      
+      // FIX: Force a full page reload to ensure all state is properly synced
+      // This prevents the race condition where isProfileComplete hasn't updated yet
+      // Using window.location ensures no cached state from React Router
+      window.location.href = '/';
     } catch (error: unknown) {
       console.error('Profile completion error:', error);
       toast.error(
