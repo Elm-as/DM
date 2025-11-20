@@ -1,0 +1,78 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[dev]
+  command = "npm run dev"
+  functions = "netlify/functions"
+  publish = "dist"
+  port = 8888
+  targetPort = 5173
+
+[context.production.environment]
+  # ========================================
+  # SUPABASE (Production)
+  # ========================================
+  VITE_SUPABASE_URL = "https://sfqaxjvknxglgjgknkph.supabase.co"
+  SUPABASE_URL = "https://sfqaxjvknxglgjgknkph.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmcWF4anZrbnhnbGdqZ2tua3BoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyNDI0NDUsImV4cCI6MjA3ODgxODQ0NX0.MMoRbnF0al_TStZWVrcBjRYOqzrAinwctXo65N_DNF0"
+  # Clé service (accessible uniquement dans les Functions, ne fuitera pas côté client car pas préfixée VITE_)
+  SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmcWF4anZrbnhnbGdqZ2tua3BoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzI0MjQ0NSwiZXhwIjoyMDc4ODE4NDQ1fQ.Brt-nHDEl2Ylmi-vHfGwpT323zBfmBenAU40Fd9h25s"
+
+  # ========================================
+  # FUSIONPAY
+  # ========================================
+  FUSIONPAY_API_URL = "" # A définir via dashboard FusionPay
+  FUSIONPAY_STATUS_URL_BASE = "https://www.pay.moneyfusion.net/paiementNotif/"
+
+  # ========================================
+  # RESEND (Emails transactionnels)
+  # ========================================
+  RESEND_API_KEY = "re_4X11cNRH_Di5DC579KyTiYottPN7w7NZw"
+
+  # ========================================
+  # APPLICATION (Frontend)
+  # ========================================
+  VITE_APP_URL = "https://daloamarket.shop"
+  SITE_URL = "https://daloamarket.shop"
+
+[context.deploy-preview.environment]
+  VITE_SUPABASE_URL = "https://your-project-ref.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "your-supabase-anon-key"
+  SUPABASE_URL = "https://your-project-ref.supabase.co"
+  SUPABASE_ANON_KEY = "your-supabase-anon-key"
+  # PayDunya désactivé
+  # PAYDUNYA_MASTER_KEY = ""
+  # PAYDUNYA_PRIVATE_KEY = ""
+  # PAYDUNYA_PUBLIC_KEY = ""
+  # PAYDUNYA_TOKEN = ""
+  # PAYDUNYA_MODE = ""
+  # FusionPay (prévisualisation)
+  SITE_URL = "http://localhost:8888"
+  FUSIONPAY_API_URL = "https://your-api-url.com"
+  FUSIONPAY_STATUS_URL_BASE = "https://www.pay.moneyfusion.net/paiementNotif/"
+  RESEND_API_KEY = "re_4X11cNRH_Di5DC579KyTiYottPN7w7NZw"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
