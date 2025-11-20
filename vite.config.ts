@@ -23,8 +23,11 @@ export default defineConfig({
     chunkSizeWarningLimit: 800,
   },
   server: {
-    // Permet de définir le port via une variable d'environnement ou par défaut 5173
-    port: Number(process.env.VITE_PORT) || 5173,
+    // Replit requires port 5000 for webview and 0.0.0.0 host
+    host: '0.0.0.0',
+    port: 5000,
+    // Allow all hosts for Replit proxy support (user sees iframe of localhost)
+    allowedHosts: true,
     proxy: {
       '/.netlify/functions': {
         target: 'http://localhost:8888',

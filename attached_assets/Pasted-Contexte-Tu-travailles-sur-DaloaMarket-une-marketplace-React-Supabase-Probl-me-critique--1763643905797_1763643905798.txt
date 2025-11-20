@@ -1,0 +1,37 @@
+Contexte :
+
+Tu travailles sur DaloaMarket, une marketplace React + Supabase.
+Problème critique : après avoir complété le profil utilisateur, l’application affiche toujours « profil à compléter » (sur PC et mobile, même après update réussi).
+Le bug persiste même après la correction du code pour rafraîchir le profil (voir patch précédent).
+Le site utilise Supabase pour l’authentification et la gestion des profils, et un provider React pour le contexte utilisateur.
+Bolt a accès à Supabase (API, policies, triggers, etc.).
+---
+Ce que tu PEUX toucher :
+
+Le code React (provider, hooks, pages, composants) pour la gestion du profil utilisateur, du cache, du state, et du rafraîchissement.
+La configuration du Service Worker ou du cache PWA si besoin.
+Les policies RLS, triggers, ou fonctions Supabase si le problème vient du backend (profil non mis à jour, cache incohérent, etc.).
+Les endpoints Supabase (API, requêtes, etc.).
+Les tests end-to-end pour vérifier la correction sur desktop et mobile.
+Ce que tu NE DOIS PAS toucher :
+
+Le design global, l’UI/UX, les couleurs, la charte graphique (sauf si c’est nécessaire pour le debug).
+Les autres fonctionnalités non liées à l’authentification ou au profil utilisateur.
+Les données de production (pas de suppression de comptes, d’annonces, etc.).
+Les scripts de build, déploiement, ou configuration Netlify (sauf si le bug est lié au cache HTTP/CDN).
+---
+Tâches à réaliser :
+
+Diagnostiquer pourquoi, après update du profil, l’état « profil à compléter » persiste (sur PC et mobile).
+Corriger la logique de rafraîchissement du profil utilisateur pour que l’état soit toujours à jour après modification (sans hard refresh).
+S’assurer que le cache (state, localStorage, service worker, PWA, etc.) ne garde jamais une version obsolète du profil.
+Vérifier que la redirection après update recharge bien le profil depuis Supabase.
+Tester la complétion de profil sur desktop ET mobile (Android/iOS, Chrome/Safari).
+Ne pas modifier le design, la navigation, ou les autres pages non concernées.
+Documenter précisément la cause du bug et la solution appliquée.
+---
+Livrables attendus :
+
+Correction du bug (profil à compléter → état à jour sans hard refresh).
+Explication technique claire de la cause et de la solution.
+(Optionnel) Ajout d’un test automatisé pour ce scénario.
