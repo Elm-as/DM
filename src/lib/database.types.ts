@@ -282,6 +282,61 @@ export interface Database {
           }
         ]
       }
+      abuse_reports: {
+        Row: {
+          id: string
+          reported_by: string
+          reported_entity_type: 'listing' | 'user'
+          reported_entity_id: string
+          report_type: 'scam' | 'spam' | 'illegal' | 'harassment' | 'inappropriate' | 'fake' | 'other'
+          description: string | null
+          status: 'pending' | 'reviewing' | 'resolved' | 'dismissed'
+          reviewer_notes: string | null
+          reviewed_by: string | null
+          reviewed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          reported_by: string
+          reported_entity_type: 'listing' | 'user'
+          reported_entity_id: string
+          report_type: 'scam' | 'spam' | 'illegal' | 'harassment' | 'inappropriate' | 'fake' | 'other'
+          description?: string | null
+          status?: 'pending' | 'reviewing' | 'resolved' | 'dismissed'
+          reviewer_notes?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          reported_by?: string
+          reported_entity_type?: 'listing' | 'user'
+          reported_entity_id?: string
+          report_type?: 'scam' | 'spam' | 'illegal' | 'harassment' | 'inappropriate' | 'fake' | 'other'
+          description?: string | null
+          status?: 'pending' | 'reviewing' | 'resolved' | 'dismissed'
+          reviewer_notes?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abuse_reports_reported_by_fkey"
+            columns: ["reported_by"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "abuse_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
