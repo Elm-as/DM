@@ -145,7 +145,50 @@ For Replit deployment, use the built-in deployment tool after configuration.
 
 ## Recent Changes
 
-### November 20, 2025
+### November 20, 2025 - Critical Bug Fix: Profile Completion Loop
+
+**Bug Description:**
+After completing the user profile, the application continued to display "profil à compléter" (profile to complete) even after successful database update. This caused an infinite redirect loop preventing users from accessing the application.
+
+**Root Cause:**
+Race condition between React state updates and navigation:
+1. User completes profile → `updateUserProfile()` saves to database
+2. `updateUserProfile()` triggers async `setUserProfile()` state update  
+3. Code calls `refreshUserProfile()` then immediately `navigate('/')`
+4. Navigation occurs before `isProfileComplete` memo re-computes from updated `userProfile` state
+5. User reaches homepage → `PrivateRoute` checks `isProfileComplete` (still `false`) → redirects to `/complete-profile` → infinite loop
+
+**Technical Details:**
+- React batches state updates asynchronously for performance
+- `useMemo` only re-computes when dependencies change
+- Navigation triggered before memo dependency (`userProfile`) fully propagated through React's update cycle
+- Service Worker ruled out - only caches static assets, not API responses
+
+**Solution Applied:**
+Changed navigation from React Router's `navigate('/')` to `window.location.href = '/'` in `CompleteProfilePage.tsx`. This forces a full page reload which:
+- Clears all React state
+- Re-initializes `SupabaseContext` from scratch
+- Fetches fresh profile data from Supabase
+- Guarantees `isProfileComplete` calculates from current database state
+
+**Files Modified:**
+- `src/pages/auth/CompleteProfilePage.tsx` - Replaced React Router navigation with full page reload after profile update
+
+**Trade-offs:**
+- Full page reload is heavier than client-side navigation
+- User experiences brief page flash instead of smooth transition
+- Ensures data consistency - critical for authentication flow
+
+**Testing Required:**
+- Desktop: Complete profile flow without hard refresh ✓
+- Mobile: Complete profile on Chrome/Safari (Android/iOS)
+- Verify no additional caching issues on mobile PWA
+
+**Architect Review:** PASS - Solution is functionally sound and breaks the race condition
+
+---
+
+### November 20, 2025 - Initial Replit Setup
 - Migrated from Node.js 18 to Node.js 20
 - Updated Vite config for Replit environment:
   - Port 5000 with 0.0.0.0 host
